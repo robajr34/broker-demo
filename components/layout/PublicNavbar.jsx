@@ -18,6 +18,9 @@ import {
   Mail,
   ShieldCheck,
   LayoutDashboard,
+  PackageCheck,
+  Factory,
+  Store,
 } from "lucide-react";
 
 export default function PublicNavbar() {
@@ -28,9 +31,36 @@ export default function PublicNavbar() {
 
   const navLinks = [
     { href: "/", label: t("home"), icon: Home },
-    { href: "/properties", label: t("properties"), icon: Building2 },
-    { href: "/cars", label: t("cars"), icon: Car },
-    { href: "/about", label: t("about"), icon: Info },
+    {
+      href: "/listings?category=import-materials",
+      label: t("categoryImportMaterials"),
+      icon: PackageCheck,
+    },
+    {
+      href: "/listings?category=factories",
+      label: t("categoryFactories"),
+      icon: Factory,
+    },
+    {
+      href: "/listings?category=shops-for-rent",
+      label: t("categoryShopsForRent"),
+      icon: Store,
+    },
+    {
+      href: "/listings?category=houses-for-rent",
+      label: t("categoryHousesForRent"),
+      icon: Home,
+    },
+    {
+      href: "/listings?category=properties",
+      label: t("categoryProperties"),
+      icon: Building2,
+    },
+    {
+      href: "/listings?category=vehicles",
+      label: t("categoryVehicles"),
+      icon: Car,
+    },
     { href: "/contact", label: t("contact"), icon: Mail },
   ];
 

@@ -37,9 +37,9 @@ function PropertiesContent() {
   const propertyListings = useMemo(() => {
     return listings
       .filter((item) => {
-        if (item.status === "draft" || item.status === "archived") return false;
-        // Exclude cars from properties page
-        if (item.category === "car") return false;
+        // Include property items (houses for rent, shops for rent, commercial)
+        const isProperty = ["houses-for-rent", "shops-for-rent", "house", "apartment", "commercial", "land"].includes(item.category);
+        if (!isProperty) return false;
 
         if (filters.search) {
           const q = filters.search.toLowerCase();

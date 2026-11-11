@@ -65,11 +65,12 @@ export default function RevenueAnalyticsPage() {
               <Select
                 options={[
                   { value: "all", label: "All Asset Classes" },
-                  { value: "house", label: t("categoryHouse") },
-                  { value: "apartment", label: t("categoryApartment") },
-                  { value: "commercial", label: t("categoryCommercial") },
-                  { value: "land", label: t("categoryLand") },
-                  { value: "car", label: t("categoryCar") },
+                  { value: "import-materials", label: t("categoryImportMaterials") },
+                  { value: "factories", label: t("categoryFactories") },
+                  { value: "shops-for-rent", label: t("categoryShopsForRent") },
+                  { value: "houses-for-rent", label: t("categoryHousesForRent") },
+                  { value: "properties", label: t("categoryProperties") },
+                  { value: "vehicles", label: t("categoryVehicles") },
                 ]}
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}

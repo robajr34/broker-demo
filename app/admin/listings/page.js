@@ -46,12 +46,13 @@ export default function AdminListingsPage() {
   const [previewItem, setPreviewItem] = useState(null);
 
   const categoryOptions = [
-    { value: "all", label: "All Categories" },
-    { value: "house", label: t("categoryHouse") },
-    { value: "apartment", label: t("categoryApartment") },
-    { value: "commercial", label: t("categoryCommercial") },
-    { value: "land", label: t("categoryLand") },
-    { value: "car", label: t("categoryCar") },
+    { value: "all", label: t("categoryAll") },
+    { value: "import-materials", label: t("categoryImportMaterials") },
+    { value: "factories", label: t("categoryFactories") },
+    { value: "shops-for-rent", label: t("categoryShopsForRent") },
+    { value: "houses-for-rent", label: t("categoryHousesForRent") },
+    { value: "properties", label: t("categoryProperties") },
+    { value: "vehicles", label: t("categoryVehicles") },
   ];
 
   const statusOptions = [

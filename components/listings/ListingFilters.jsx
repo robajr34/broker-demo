@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useLanguage } from "@/lib/context/LanguageContext";
+import { CATEGORIES, getSubcategoriesForCategory } from "@/lib/data/categories";
 import Input from "@/components/ui/Input";
 import Select from "@/components/ui/Select";
 import Button from "@/components/ui/Button";
@@ -12,6 +13,13 @@ import {
   SlidersHorizontal,
   ChevronDown,
   ChevronUp,
+  Tag,
+  Building2,
+  Factory,
+  Store,
+  Home,
+  PackageCheck,
+  Check,
 } from "lucide-react";
 
 export default function ListingFilters({
@@ -20,27 +28,62 @@ export default function ListingFilters({
   onReset,
   totalResults = 0,
 }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [showAdvanced, setShowAdvanced] = useState(false);
 
+  // Top-level categories (Import Materials, Factories, Shops for Rent, Houses for Rent, Properties, Vehicles)
   const categoryOptions = [
     { value: "all", label: t("categoryAll") },
-    { value: "house", label: t("categoryHouse") },
-    { value: "apartment", label: t("categoryApartment") },
-    { value: "commercial", label: t("categoryCommercial") },
-    { value: "land", label: t("categoryLand") },
-    { value: "car", label: t("categoryCar") },
+    { value: "import-materials", label: t("categoryImportMaterials") },
+    { value: "factories", label: t("categoryFactories") },
+    { value: "shops-for-rent", label: t("categoryShopsForRent") },
+    { value: "houses-for-rent", label: t("categoryHousesForRent") },
+    { value: "properties", label: t("categoryProperties") },
+    { value: "vehicles", label: t("categoryVehicles") },
+  ];
+
+  // Dynamically compute subcategories for the selected category
+  const activeSubcategories = useMemo(() => {
+    if (!filters.category || filters.category === "all") return [];
+    return getSubcategoriesForCategory(filters.category);
+  }, [filters.category]);
+
+  const subcategoryOptions = useMemo(() => {
+    if (!activeSubcategories || activeSubcategories.length === 0) return [];
+    return [
+      { value: "all", label: t("allSubcategories") },
+      ...activeSubcategories.map((sub) => ({
+        value: sub.id,
+        label: language === "am" ? sub.nameAm : sub.nameEn,
+      })),
+    ];
+  }, [activeSubcategories, language, t]);
+
+  // Factory listing / transaction types (Sale, Rent, Partnership)
+  const factoryTypeOptions = [
+    { value: "all", label: t("allTransactionTypes") },
+    { value: "sale", label: t("factoriesForSale") },
+    { value: "rent", label: t("factoriesForRent") },
+    { value: "partnership", label: t("factoryPartnershipOpportunities") },
   ];
 
   const locationOptions = [
     { value: "all", label: t("locationAll") },
     { value: "Addis Ababa", label: "Addis Ababa" },
-    { value: "Bole", label: "Bole" },
-    { value: "CMC", label: "CMC" },
-    { value: "Saris", label: "Saris" },
-    { value: "Kazanchis", label: "Kazanchis" },
-    { value: "Ayat", label: "Ayat" },
-    { value: "Adama", label: "Adama" },
+    { value: "Bole", label: "Bole (Addis Ababa)" },
+    { value: "Kazanchis", label: "Kazanchis (Addis Ababa)" },
+    { value: "Merkato", label: "Merkato (Addis Ababa)" },
+    { value: "CMC", label: "CMC (Addis Ababa)" },
+    { value: "Ayat", label: "Ayat (Addis Ababa)" },
+    { value: "Kality", label: "Kality (Addis Ababa)" },
+    { value: "Piassa", label: "Piassa (Addis Ababa)" },
+    { value: "Old Airport", label: "Old Airport / Sarbet (Addis Ababa)" },
+    { value: "Mexico", label: "Mexico Square (Addis Ababa)" },
+    { value: "Dukem", label: "Dukem (Eastern Industry Zone)" },
+    { value: "Modjo", label: "Modjo (Dry Port Logistics)" },
+    { value: "Adama", label: "Adama (Expressway Corridor)" },
+    { value: "Debre Birhan", label: "Debre Birhan" },
+    { value: "Sebeta", label: "Sebeta" },
     { value: "Bishoftu", label: "Bishoftu" },
     { value: "Hawassa", label: "Hawassa" },
   ];
@@ -60,6 +103,17 @@ export default function ListingFilters({
   ];
 
   const handleFieldChange = (field, value) => {
+    // When main category changes, reset subcategory and factoryType
+    if (field === "category") {
+      onChange?.({
+        ...filters,
+        category: value,
+        subcategory: "all",
+        transactionType: "all",
+      });
+      return;
+    }
+
     onChange?.({
       ...filters,
       [field]: value,
@@ -80,7 +134,7 @@ export default function ListingFilters({
           />
         </div>
 
-        {/* Category filter */}
+        {/* Main Category Filter */}
         <div className="md:col-span-3">
           <Select
             options={categoryOptions}
@@ -89,7 +143,7 @@ export default function ListingFilters({
           />
         </div>
 
-        {/* Location filter */}
+        {/* Location Filter */}
         <div className="md:col-span-2">
           <Select
             options={locationOptions}
@@ -121,6 +175,73 @@ export default function ListingFilters({
         </div>
       </div>
 
+      {/* Dynamic Subcategory & Factory Listing Type Filters (when category is selected) */}
+      {filters.category && filters.category !== "all" && activeSubcategories.length > 0 && (
+        <div className="pt-3 border-t border-slate-100 flex flex-col md:flex-row md:items-center gap-3">
+          {/* Subcategory Select */}
+          <div className="flex-1">
+            <Select
+              label={t("filterSubcategory")}
+              options={subcategoryOptions}
+              value={filters.subcategory || "all"}
+              onChange={(e) => handleFieldChange("subcategory", e.target.value)}
+            />
+          </div>
+
+          {/* For Factories: Transaction Type Select (Sale / Rent / Partnership) */}
+          {filters.category === "factories" && (
+            <div className="flex-1">
+              <Select
+                label={t("listingType")}
+                options={factoryTypeOptions}
+                value={filters.transactionType || "all"}
+                onChange={(e) => handleFieldChange("transactionType", e.target.value)}
+              />
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Quick Subcategory Pills / Chips for rapid 1-click filtering */}
+      {filters.category && filters.category !== "all" && activeSubcategories.length > 0 && (
+        <div className="pt-2 flex flex-wrap items-center gap-1.5">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mr-1 flex items-center gap-1">
+            <Tag className="w-3 h-3 text-amber-600" />
+            {t("subcategory")}:
+          </span>
+
+          <button
+            type="button"
+            onClick={() => handleFieldChange("subcategory", "all")}
+            className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
+              !filters.subcategory || filters.subcategory === "all"
+                ? "bg-slate-900 text-white shadow-xs"
+                : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+            }`}
+          >
+            {t("all")}
+          </button>
+
+          {activeSubcategories.map((sub) => {
+            const isSelected = filters.subcategory === sub.id;
+            return (
+              <button
+                key={sub.id}
+                type="button"
+                onClick={() => handleFieldChange("subcategory", sub.id)}
+                className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
+                  isSelected
+                    ? "bg-amber-600 text-white shadow-xs font-bold"
+                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                }`}
+              >
+                {language === "am" ? sub.nameAm : sub.nameEn}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
       {/* Advanced Filters Expandable Area */}
       {showAdvanced && (
         <div className="pt-4 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 animate-fade-in">
@@ -129,7 +250,7 @@ export default function ListingFilters({
             <Input
               type="number"
               label={t("minPrice")}
-              placeholder="e.g. 5,000,000"
+              placeholder="e.g. 50,000"
               value={filters.minPrice || ""}
               onChange={(e) => handleFieldChange("minPrice", e.target.value)}
             />
@@ -175,7 +296,13 @@ export default function ListingFilters({
         </span>
 
         {/* Quick active filter tags */}
-        {(filters.category !== "all" || filters.location !== "all" || filters.search || filters.minPrice || filters.maxPrice) && (
+        {(filters.category !== "all" ||
+          (filters.subcategory && filters.subcategory !== "all") ||
+          (filters.transactionType && filters.transactionType !== "all") ||
+          filters.location !== "all" ||
+          filters.search ||
+          filters.minPrice ||
+          filters.maxPrice) && (
           <button
             type="button"
             onClick={onReset}
@@ -188,4 +315,3 @@ export default function ListingFilters({
     </div>
   );
 }
-

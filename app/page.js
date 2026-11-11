@@ -20,6 +20,8 @@ import {
   Home,
   Layers,
   Store,
+  PackageCheck,
+  Factory,
   ShieldCheck,
   CheckCircle2,
   PhoneCall,
@@ -48,55 +50,76 @@ export default function HomePage() {
   // Filter featured listings for homepage
   const featuredListings = listings.filter((l) => l.isFeatured).slice(0, 6);
 
-  // Count items per category
+  // Count items per category (All 6 Categories)
   const counts = {
-    house: listings.filter((l) => l.category === "house").length,
-    apartment: listings.filter((l) => l.category === "apartment").length,
-    commercial: listings.filter((l) => l.category === "commercial").length,
-    land: listings.filter((l) => l.category === "land").length,
-    car: listings.filter((l) => l.category === "car").length,
+    importMaterials: listings.filter((l) => l.category === "import-materials").length,
+    factories: listings.filter((l) => l.category === "factories").length,
+    shopsForRent: listings.filter((l) => l.category === "shops-for-rent").length,
+    housesForRent: listings.filter((l) => l.category === "houses-for-rent").length,
+    properties: listings.filter((l) => l.category === "properties" || l.category === "house" || l.category === "apartment" || l.category === "land").length,
+    vehicles: listings.filter((l) => l.category === "vehicles" || l.category === "car").length,
   };
 
   const categories = [
     {
-      id: "house",
-      name: t("categoryHouse"),
-      href: "/properties?category=house",
-      count: counts.house,
-      icon: Home,
-      image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=600&q=80",
+      id: "import-materials",
+      name: t("categoryImportMaterials"),
+      href: "/listings?category=import-materials",
+      count: counts.importMaterials,
+      subcategoriesCount: 8,
+      tagline: language === "am" ? "የግንባታ ዕቃዎች፣ ማሽኖች፣ ኤሌክትሮኒክስ" : "Machinery, Rebar & Electronics",
+      icon: PackageCheck,
+      image: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80",
     },
     {
-      id: "apartment",
-      name: t("categoryApartment"),
-      href: "/properties?category=apartment",
-      count: counts.apartment,
-      icon: Building2,
-      image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80",
+      id: "factories",
+      name: t("categoryFactories"),
+      href: "/listings?category=factories",
+      count: counts.factories,
+      subcategoriesCount: 8,
+      tagline: language === "am" ? "ሽያጭ፣ ኪራይ እና የሽርክና እድሎች" : "For Sale, Rent & Partnership",
+      icon: Factory,
+      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80",
     },
     {
-      id: "commercial",
-      name: t("categoryCommercial"),
-      href: "/properties?category=commercial",
-      count: counts.commercial,
+      id: "shops-for-rent",
+      name: t("categoryShopsForRent"),
+      href: "/listings?category=shops-for-rent",
+      count: counts.shopsForRent,
+      subcategoriesCount: 5,
+      tagline: language === "am" ? "የችርቻሮ ሱቆች፣ ሞሎችና መጋዘኖች" : "Retail, Malls, Offices & Warehouses",
       icon: Store,
-      image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&q=80",
+      image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80",
     },
     {
-      id: "land",
-      name: t("categoryLand"),
-      href: "/properties?category=land",
-      count: counts.land,
-      icon: Layers,
-      image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=600&q=80",
+      id: "houses-for-rent",
+      name: t("categoryHousesForRent"),
+      href: "/listings?category=houses-for-rent",
+      count: counts.housesForRent,
+      subcategoriesCount: 5,
+      tagline: language === "am" ? "ቪላዎች፣ አፓርታማዎችና ነጠላ ክፍሎች" : "Villas, Apartments & Studio Rooms",
+      icon: Home,
+      image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80",
     },
     {
-      id: "car",
-      name: t("categoryCar"),
-      href: "/cars",
-      count: counts.car,
+      id: "properties",
+      name: t("categoryProperties"),
+      href: "/listings?category=properties",
+      count: counts.properties,
+      subcategoriesCount: 5,
+      tagline: language === "am" ? "የሚሸጡ ቪላዎች፣ አፓርታማዎችና መሬቶች" : "Villas, Apartments, Land & Buildings for Sale",
+      icon: Building2,
+      image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
+    },
+    {
+      id: "vehicles",
+      name: t("categoryVehicles"),
+      href: "/listings?category=vehicles",
+      count: counts.vehicles,
+      subcategoriesCount: 6,
+      tagline: language === "am" ? "4x4 ኤስዩቪዎች፣ የጭነት መኪኖችና የኤሌክትሪክ መኪኖች" : "SUVs, Dump Trucks, Pickups & EVs",
       icon: Car,
-      image: "https://images.unsplash.com/photo-1594502184342-2e12f877aa73?auto=format&fit=crop&w=600&q=80",
+      image: "https://images.unsplash.com/photo-1594502184342-2e12f877aa73?auto=format&fit=crop&w=800&q=80",
     },
   ];
 
@@ -203,32 +226,43 @@ export default function HomePage() {
             align="center"
           />
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {categories.map((cat) => {
               const Icon = cat.icon;
               return (
                 <Link
                   key={cat.id}
                   href={cat.href}
-                  className="group relative rounded-2xl overflow-hidden aspect-[4/5] bg-slate-900 border border-slate-200 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-end p-5"
+                  className="group relative rounded-2xl overflow-hidden aspect-[4/5] bg-slate-900 border border-slate-200/80 shadow-sm hover:shadow-2xl hover:border-amber-400 transition-all duration-300 flex flex-col justify-end p-6"
                 >
                   <img
                     src={cat.image}
                     alt={cat.name}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-70 group-hover:opacity-85"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-65 group-hover:opacity-80"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent" />
 
-                  <div className="relative z-10 space-y-1">
-                    <div className="w-10 h-10 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center font-bold mb-2 shadow-md">
-                      <Icon className="w-5 h-5" />
+                  {/* Top Subcategory Pill */}
+                  <div className="absolute top-4 right-4 z-10">
+                    <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-black/60 backdrop-blur-md text-amber-300 border border-amber-500/30">
+                      {cat.subcategoriesCount} {t("subcategory")}
+                    </span>
+                  </div>
+
+                  <div className="relative z-10 space-y-2">
+                    <div className="w-12 h-12 rounded-2xl bg-amber-500 text-slate-950 flex items-center justify-center font-bold mb-3 shadow-lg group-hover:scale-105 transition-transform">
+                      <Icon className="w-6 h-6 stroke-[2.2]" />
                     </div>
-                    <h3 className="text-base font-extrabold text-white leading-tight group-hover:text-amber-400 transition-colors">
+                    <h3 className="text-lg font-extrabold text-white leading-tight group-hover:text-amber-400 transition-colors">
                       {cat.name}
                     </h3>
-                    <p className="text-xs text-slate-300 font-medium">
-                      {cat.count} {t("listingsCount")}
+                    <p className="text-xs text-slate-300 font-medium line-clamp-1">
+                      {cat.tagline}
                     </p>
+                    <div className="pt-1 flex items-center justify-between text-xs text-amber-400 font-semibold">
+                      <span>{cat.count} {t("listingsCount")}</span>
+                      <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+                    </div>
                   </div>
                 </Link>
               );

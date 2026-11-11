@@ -95,35 +95,40 @@ export default function PublicFooter() {
             </ul>
           </div>
 
-          {/* Column 3: Property Categories */}
+          {/* Column 3: Marketplace Categories */}
           <div className="space-y-4">
             <h4 className="text-sm font-bold text-white uppercase tracking-wider">
-              {t("propertyCategories")}
+              {t("category")}
             </h4>
             <ul className="space-y-2.5 text-sm text-slate-400">
               <li>
-                <Link href="/properties?category=house" className="hover:text-white transition-colors">
-                  {t("categoryHouse")}
+                <Link href="/listings?category=import-materials" className="hover:text-white transition-colors">
+                  {t("categoryImportMaterials")}
                 </Link>
               </li>
               <li>
-                <Link href="/properties?category=apartment" className="hover:text-white transition-colors">
-                  {t("categoryApartment")}
+                <Link href="/listings?category=factories" className="hover:text-white transition-colors">
+                  {t("categoryFactories")}
                 </Link>
               </li>
               <li>
-                <Link href="/properties?category=commercial" className="hover:text-white transition-colors">
-                  {t("categoryCommercial")}
+                <Link href="/listings?category=shops-for-rent" className="hover:text-white transition-colors">
+                  {t("categoryShopsForRent")}
                 </Link>
               </li>
               <li>
-                <Link href="/properties?category=land" className="hover:text-white transition-colors">
-                  {t("categoryLand")}
+                <Link href="/listings?category=houses-for-rent" className="hover:text-white transition-colors">
+                  {t("categoryHousesForRent")}
                 </Link>
               </li>
               <li>
-                <Link href="/cars" className="hover:text-white transition-colors">
-                  {t("categoryCar")}
+                <Link href="/listings?category=properties" className="hover:text-white transition-colors">
+                  {t("categoryProperties")}
+                </Link>
+              </li>
+              <li>
+                <Link href="/listings?category=vehicles" className="hover:text-white transition-colors">
+                  {t("categoryVehicles")}
                 </Link>
               </li>
             </ul>

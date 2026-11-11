@@ -21,6 +21,8 @@ function ListingsContent() {
   const [filters, setFilters] = useState({
     search: searchParams.get("search") || "",
     category: searchParams.get("category") || "all",
+    subcategory: searchParams.get("subcategory") || "all",
+    transactionType: searchParams.get("transactionType") || "all",
     location: searchParams.get("location") || "all",
     minPrice: searchParams.get("minPrice") || "",
     maxPrice: searchParams.get("maxPrice") || "",
@@ -48,9 +50,30 @@ function ListingsContent() {
           if (!matchTitle && !matchTitleAm && !matchLoc && !matchDesc) return false;
         }
 
-        // Category filter
-        if (filters.category !== "all" && item.category !== filters.category) {
-          return false;
+        // Category filter (with legacy fallback support)
+        if (filters.category !== "all") {
+          const cat = filters.category;
+          const matchDirect = item.category === cat;
+          const matchLegacyHouse = cat === "house" && item.category === "houses-for-rent";
+          const matchLegacyCommercial = cat === "commercial" && item.category === "shops-for-rent";
+          const matchLegacyCar = cat === "car" && item.category === "import-materials";
+          if (!matchDirect && !matchLegacyHouse && !matchLegacyCommercial && !matchLegacyCar) {
+            return false;
+          }
+        }
+
+        // Subcategory filter
+        if (filters.subcategory && filters.subcategory !== "all") {
+          if (item.subcategory !== filters.subcategory) {
+            return false;
+          }
+        }
+
+        // Transaction Type filter (for Factories: sale, rent, partnership)
+        if (filters.transactionType && filters.transactionType !== "all") {
+          if (item.transactionType !== filters.transactionType) {
+            return false;
+          }
         }
 
         // Location filter
@@ -97,6 +120,8 @@ function ListingsContent() {
     setFilters({
       search: "",
       category: "all",
+      subcategory: "all",
+      transactionType: "all",
       location: "all",
       minPrice: "",
       maxPrice: "",

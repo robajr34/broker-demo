@@ -14,7 +14,11 @@ import PricingFields from "./PricingFields";
 import PropertyFields from "./PropertyFields";
 import VehicleFields from "./VehicleFields";
 import LandFields from "./LandFields";
+import ImportMaterialFields from "./ImportMaterialFields";
+import FactoryFields from "./FactoryFields";
+import ShopFields from "./ShopFields";
 import ContactFields from "./ContactFields";
+import { CATEGORIES, getSubcategoriesForCategory } from "@/lib/data/categories";
 import Modal from "@/components/ui/Modal";
 import ListingCard from "@/components/listings/ListingCard";
 import {
@@ -35,13 +39,15 @@ export default function ListingForm({
   isEdit = false,
 }) {
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { addToast } = useToast();
 
   const [formData, setFormData] = useState({
     title: initialData?.title || "",
     titleAm: initialData?.titleAm || "",
-    category: initialData?.category || "house",
+    category: initialData?.category || "import-materials",
+    subcategory: initialData?.subcategory || "",
+    transactionType: initialData?.transactionType || "sale",
     propertyType: initialData?.propertyType || "villa",
     description: initialData?.description || "",
     descriptionAm: initialData?.descriptionAm || "",
@@ -64,11 +70,21 @@ export default function ListingForm({
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   const categoryOptions = [
-    { value: "house", label: t("categoryHouse") },
-    { value: "apartment", label: t("categoryApartment") },
-    { value: "commercial", label: t("categoryCommercial") },
-    { value: "land", label: t("categoryLand") },
-    { value: "car", label: t("categoryCar") },
+    { value: "import-materials", label: t("categoryImportMaterials") },
+    { value: "factories", label: t("categoryFactories") },
+    { value: "shops-for-rent", label: t("categoryShopsForRent") },
+    { value: "houses-for-rent", label: t("categoryHousesForRent") },
+    { value: "properties", label: t("categoryProperties") },
+    { value: "vehicles", label: t("categoryVehicles") },
+  ];
+
+  const subcategoryList = getSubcategoriesForCategory(formData.category);
+  const subcategoryOptions = [
+    { value: "", label: t("allSubcategories") },
+    ...subcategoryList.map((sub) => ({
+      value: sub.id,
+      label: language === "am" ? sub.nameAm : sub.nameEn,
+    })),
   ];
 
   const locationOptions = [
@@ -168,15 +184,16 @@ export default function ListingForm({
               setFormData({
                 ...formData,
                 category: e.target.value,
-                // Adjust default propertyType based on category
-                propertyType:
-                  e.target.value === "car"
-                    ? "suv"
-                    : e.target.value === "land"
-                    ? "land"
-                    : "villa",
+                subcategory: "",
               })
             }
+          />
+
+          <Select
+            label={t("subcategory")}
+            options={subcategoryOptions}
+            value={formData.subcategory}
+            onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })}
           />
 
           <Select
@@ -260,24 +277,32 @@ export default function ListingForm({
       {/* SECTION 3: CONDITIONAL SPECIFICATIONS */}
       <FormSection
         title={t("specificationsSection")}
-        subtitle={`Conditional technical specifications tailored for ${
-          formData.category === "car"
-            ? "Automotive Vehicles"
-            : formData.category === "land"
-            ? "Land Parcels"
-            : "Real Estate Properties"
-        }.`}
+        subtitle={`Technical specifications tailored for ${formData.category}.`}
         badge={formData.category.toUpperCase()}
       >
-        {formData.category === "car" ? (
-          <VehicleFields
+        {formData.category === "import-materials" ? (
+          <ImportMaterialFields
             specifications={formData.specifications}
             onChange={(specs) =>
               setFormData({ ...formData, specifications: specs })
             }
           />
-        ) : formData.category === "land" ? (
-          <LandFields
+        ) : formData.category === "factories" ? (
+          <FactoryFields
+            specifications={formData.specifications}
+            onChange={(specs) =>
+              setFormData({ ...formData, specifications: specs })
+            }
+          />
+        ) : formData.category === "shops-for-rent" ? (
+          <ShopFields
+            specifications={formData.specifications}
+            onChange={(specs) =>
+              setFormData({ ...formData, specifications: specs })
+            }
+          />
+        ) : formData.category === "vehicles" || formData.category === "car" ? (
+          <VehicleFields
             specifications={formData.specifications}
             onChange={(specs) =>
               setFormData({ ...formData, specifications: specs })

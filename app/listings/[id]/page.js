@@ -11,6 +11,7 @@ import PublicFooter from "@/components/layout/PublicFooter";
 import ListingGallery from "@/components/listings/ListingGallery";
 import ListingSpecifications from "@/components/listings/ListingSpecifications";
 import ListingStatusBadge from "@/components/listings/ListingStatusBadge";
+import { getCategoryName, getSubcategoryName } from "@/lib/data/categories";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Textarea from "@/components/ui/Textarea";
@@ -164,18 +165,50 @@ export default function ListingDetailPage({ params }) {
             </button>
           </div>
 
+          {/* Fictional Sample Listing Demo Notice & Broker Intermediary Banner */}
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-2.5 text-amber-900 font-semibold">
+              <Sparkles className="w-5 h-5 text-amber-600 shrink-0" />
+              <span>
+                <strong>{t("demoBadge")}:</strong> {t("demoNotice")} — {t("brokerRoleExplain")}
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white border border-amber-300 text-amber-800 font-bold shrink-0">
+              <ShieldCheck className="w-4 h-4 text-amber-600" />
+              <span>{t("brokerIntermediaryTag")}</span>
+            </div>
+          </div>
+
           {/* Title & Price Header */}
           <div className="bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-8 shadow-xs flex flex-col md:flex-row md:items-start md:justify-between gap-6">
             <div className="space-y-3 max-w-3xl">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider bg-slate-900 text-white">
-                  {listing.category.toUpperCase()}
+                  {getCategoryName(listing.category, language)}
                 </span>
+
+                {listing.subcategory && (
+                  <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                    {getSubcategoryName(listing.category, listing.subcategory, language)}
+                  </span>
+                )}
+
+                {listing.category === "factories" && listing.transactionType && (
+                  <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-purple-100 text-purple-900 border border-purple-300">
+                    {listing.transactionType === "sale"
+                      ? t("factorySale")
+                      : listing.transactionType === "rent"
+                      ? t("factoryRent")
+                      : t("factoryPartnership")}
+                  </span>
+                )}
+
                 <ListingStatusBadge
                   status={listing.status}
                   isFeatured={listing.isFeatured}
                   size="md"
                 />
+
                 <span className="text-xs font-semibold text-slate-400">
                   {t("referenceNo")}: <strong className="text-slate-700">{listing.referenceNo}</strong>
                 </span>
@@ -197,13 +230,33 @@ export default function ListingDetailPage({ params }) {
             {/* Price Box */}
             <div className="text-left md:text-right shrink-0 bg-slate-50 md:bg-transparent p-4 md:p-0 rounded-xl border md:border-0 border-slate-200">
               <span className="text-xs uppercase font-bold tracking-wider text-slate-400 block mb-1">
-                {t("price")}
+                {listing.pricePeriod === "month" ||
+                listing.category === "houses-for-rent" ||
+                listing.category === "shops-for-rent" ||
+                (listing.category === "factories" && listing.transactionType === "rent")
+                  ? t("rentalPrice")
+                  : t("price")}
               </span>
-              <span className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight text-amber-700">
-                {formatPrice(listing.publicPrice)}
-              </span>
+              <div className="flex items-baseline md:justify-end gap-1">
+                <span className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight text-amber-700">
+                  {formatPrice(listing.publicPrice)}
+                </span>
+                {(listing.pricePeriod === "month" ||
+                  listing.category === "houses-for-rent" ||
+                  listing.category === "shops-for-rent" ||
+                  (listing.category === "factories" && listing.transactionType === "rent")) && (
+                  <span className="text-sm font-bold text-amber-800">
+                    {t("perMonth")}
+                  </span>
+                )}
+                {listing.transactionType === "partnership" && (
+                  <span className="text-xs font-bold text-purple-700">
+                    (Equity Contribution)
+                  </span>
+                )}
+              </div>
               <span className="text-[11px] text-slate-500 block mt-1">
-                Verified Asking Price (ETB)
+                Verified Broker Asking Rate (ETB)
               </span>
             </div>
           </div>

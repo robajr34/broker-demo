@@ -6,6 +6,10 @@ import { useLanguage } from "@/lib/context/LanguageContext";
 import Button from "@/components/ui/Button";
 import {
   Search,
+  PackageCheck,
+  Factory,
+  Store,
+  Home,
   Building2,
   Car,
   MapPin,
@@ -15,9 +19,9 @@ import {
 
 export default function ListingSearch() {
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
-  const [activeTab, setActiveTab] = useState("all"); // 'all', 'properties', 'cars'
+  const [activeTab, setActiveTab] = useState("all");
   const [category, setCategory] = useState("all");
   const [location, setLocation] = useState("all");
   const [minPrice, setMinPrice] = useState("");
@@ -27,33 +31,32 @@ export default function ListingSearch() {
     { value: "all", label: t("locationAll") },
     { value: "Addis Ababa", label: "Addis Ababa" },
     { value: "Bole", label: "Bole" },
-    { value: "CMC", label: "CMC" },
-    { value: "Saris", label: "Saris" },
     { value: "Kazanchis", label: "Kazanchis" },
+    { value: "Merkato", label: "Merkato" },
+    { value: "CMC", label: "CMC" },
     { value: "Ayat", label: "Ayat" },
+    { value: "Kality", label: "Kality" },
+    { value: "Old Airport", label: "Old Airport" },
+    { value: "Dukem", label: "Dukem (Industry Zone)" },
+    { value: "Modjo", label: "Modjo (Dry Port)" },
     { value: "Adama", label: "Adama" },
-    { value: "Bishoftu", label: "Bishoftu" },
-    { value: "Hawassa", label: "Hawassa" },
+    { value: "Debre Birhan", label: "Debre Birhan" },
+    { value: "Sebeta", label: "Sebeta" },
   ];
 
   const categories = [
     { value: "all", label: t("categoryAll") },
-    { value: "house", label: t("categoryHouse") },
-    { value: "apartment", label: t("categoryApartment") },
-    { value: "commercial", label: t("categoryCommercial") },
-    { value: "land", label: t("categoryLand") },
-    { value: "car", label: t("categoryCar") },
+    { value: "import-materials", label: t("categoryImportMaterials") },
+    { value: "factories", label: t("categoryFactories") },
+    { value: "shops-for-rent", label: t("categoryShopsForRent") },
+    { value: "houses-for-rent", label: t("categoryHousesForRent") },
+    { value: "properties", label: t("categoryProperties") },
+    { value: "vehicles", label: t("categoryVehicles") },
   ];
 
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-    if (tab === "properties") {
-      setCategory("house");
-    } else if (tab === "cars") {
-      setCategory("car");
-    } else {
-      setCategory("all");
-    }
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
+    setCategory(tabId);
   };
 
   const handleSearch = (e) => {
@@ -67,47 +70,39 @@ export default function ListingSearch() {
     router.push(`/listings?${params.toString()}`);
   };
 
+  const tabs = [
+    { id: "all", label: t("all"), icon: null },
+    { id: "import-materials", label: t("categoryImportMaterials"), icon: PackageCheck },
+    { id: "factories", label: t("categoryFactories"), icon: Factory },
+    { id: "shops-for-rent", label: t("categoryShopsForRent"), icon: Store },
+    { id: "houses-for-rent", label: t("categoryHousesForRent"), icon: Home },
+    { id: "properties", label: t("categoryProperties"), icon: Building2 },
+    { id: "vehicles", label: t("categoryVehicles"), icon: Car },
+  ];
+
   return (
     <div className="w-full max-w-4xl mx-auto">
       {/* Category Tabs */}
-      <div className="flex items-center gap-2 mb-3">
-        <button
-          type="button"
-          onClick={() => handleTabChange("all")}
-          className={`px-5 py-2.5 rounded-t-xl text-xs sm:text-sm font-bold transition-all ${
-            activeTab === "all"
-              ? "bg-white text-slate-900 shadow-sm"
-              : "bg-black/40 hover:bg-black/60 text-white backdrop-blur-xs"
-          }`}
-        >
-          {t("categoryAll")}
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleTabChange("properties")}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-t-xl text-xs sm:text-sm font-bold transition-all ${
-            activeTab === "properties"
-              ? "bg-white text-slate-900 shadow-sm"
-              : "bg-black/40 hover:bg-black/60 text-white backdrop-blur-xs"
-          }`}
-        >
-          <Building2 className="w-4 h-4 text-amber-500" />
-          <span>{t("exploreProperties")}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleTabChange("cars")}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-t-xl text-xs sm:text-sm font-bold transition-all ${
-            activeTab === "cars"
-              ? "bg-white text-slate-900 shadow-sm"
-              : "bg-black/40 hover:bg-black/60 text-white backdrop-blur-xs"
-          }`}
-        >
-          <Car className="w-4 h-4 text-amber-500" />
-          <span>{t("exploreCars")}</span>
-        </button>
+      <div className="flex items-center gap-1.5 sm:gap-2 mb-2 overflow-x-auto pb-1 scrollbar-none">
+        {tabs.map((tab) => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => handleTabChange(tab.id)}
+              className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-t-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all ${
+                isActive
+                  ? "bg-white text-slate-900 shadow-sm"
+                  : "bg-black/50 hover:bg-black/70 text-slate-200 backdrop-blur-xs"
+              }`}
+            >
+              {Icon && <Icon className="w-3.5 h-3.5 text-amber-500" />}
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Main Search Panel */}
@@ -123,7 +118,10 @@ export default function ListingSearch() {
           <div className="relative">
             <select
               value={category}
-              onChange={(e) => setCategory(e.target.value)}
+              onChange={(e) => {
+                setCategory(e.target.value);
+                setActiveTab(e.target.value);
+              }}
               className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500 appearance-none font-medium cursor-pointer"
             >
               {categories.map((c) => (
@@ -160,34 +158,25 @@ export default function ListingSearch() {
         {/* Price Range */}
         <div className="space-y-1.5">
           <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
-            {t("price")} (ETB)
+            {t("maxPrice")}
           </label>
-          <div className="grid grid-cols-2 gap-2">
-            <input
-              type="number"
-              placeholder="Min ETB"
-              value={minPrice}
-              onChange={(e) => setMinPrice(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500 placeholder:text-slate-400 font-medium"
-            />
-            <input
-              type="number"
-              placeholder="Max ETB"
-              value={maxPrice}
-              onChange={(e) => setMaxPrice(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500 placeholder:text-slate-400 font-medium"
-            />
-          </div>
+          <input
+            type="number"
+            placeholder="e.g. 5,000,000"
+            value={maxPrice}
+            onChange={(e) => setMaxPrice(e.target.value)}
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium"
+          />
         </div>
 
-        {/* Search Submit Button */}
+        {/* Submit Button */}
         <div>
           <Button
             type="submit"
             variant="primary"
             size="lg"
             icon={Search}
-            className="w-full font-bold shadow-lg shadow-amber-600/30 text-sm"
+            className="w-full font-bold shadow-lg shadow-amber-600/25"
           >
             {t("searchListings")}
           </Button>
@@ -196,4 +185,3 @@ export default function ListingSearch() {
     </div>
   );
 }
-

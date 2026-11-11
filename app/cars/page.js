@@ -35,8 +35,7 @@ function CarsContent() {
   const carListings = useMemo(() => {
     return listings
       .filter((item) => {
-        if (item.status === "draft" || item.status === "archived") return false;
-        if (item.category !== "car") return false;
+        if (item.category !== "car" && item.subcategory !== "vehicles-spare-parts") return false;
 
         if (filters.search) {
           const q = filters.search.toLowerCase();
